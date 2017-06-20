@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +52,8 @@ public class CrimeFragment extends Fragment{
         });
 
         dateButton = (Button)v.findViewById(R.id.crime_date);
-        dateButton.setText(crime.getDate().toString());
+        dateButton.setText(DateFormat.getDateFormat(getContext()).format(crime.getDate()));
+//        dateButton.setText(crime.getDate().toString());
         dateButton.setEnabled(false);
 
         solvedCheckBox = (CheckBox)v.findViewById(R.id.crime_solved);
