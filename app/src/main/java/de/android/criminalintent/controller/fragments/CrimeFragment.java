@@ -1,4 +1,4 @@
-package de.android.criminalintent.controller;
+package de.android.criminalintent.controller.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

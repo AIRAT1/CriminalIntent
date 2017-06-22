@@ -1,24 +1,25 @@
-package de.android.criminalintent.controller;
+package de.android.criminalintent.controller.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
 import de.android.criminalintent.R;
 
-public class CrimeActivity extends FragmentActivity {
+public abstract class SingleFragmentActivity extends FragmentActivity{
+    protected abstract Fragment createFragment();
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_crime);
-
+        setContentView(R.layout.acrivity_fragment);
         FragmentManager fm = getSupportFragmentManager();
         Fragment fragment = fm.findFragmentById(R.id.fragmentContainer);
 
         if (fragment == null) {
-            fragment = new CrimeFragment();
+            fragment = createFragment();
             fm.beginTransaction()
                     .add(R.id.fragmentContainer, fragment)
                     .commit();
