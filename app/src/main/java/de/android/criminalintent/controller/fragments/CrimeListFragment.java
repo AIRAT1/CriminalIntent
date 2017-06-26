@@ -1,20 +1,22 @@
 package de.android.criminalintent.controller.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
 import de.android.criminalintent.R;
+import de.android.criminalintent.controller.activities.CrimeActivity;
 import de.android.criminalintent.model.Crime;
 import de.android.criminalintent.model.CrimeLab;
 
@@ -55,13 +57,15 @@ public class CrimeListFragment extends Fragment{
         public void bindCrime(Crime crime) {
             this.crime = crime;
             titleTextView.setText(crime.getTitle());
-            dateTextView.setText(crime.getDate().toString());
+            dateTextView.setText(DateFormat.getDateFormat(getContext()).format(crime.getDate()));
             solvedCheckBox.setChecked(crime.isSolved());
         }
 
         @Override
         public void onClick(View view) {
-            Toast.makeText(getActivity(), crime.getTitle() + " clicked!", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), crime.getTitle() + " clicked!", Toast.LENGTH_SHORT).show();
+            Intent intent = CrimeActivity.newIntent(getActivity(), crime.getId());
+            startActivity(intent);
         }
     }
 
