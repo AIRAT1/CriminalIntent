@@ -16,7 +16,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import de.android.criminalintent.R;
-import de.android.criminalintent.controller.activities.CrimeActivity;
+import de.android.criminalintent.controller.activities.CrimePagerActivity;
 import de.android.criminalintent.model.Crime;
 import de.android.criminalintent.model.CrimeLab;
 
@@ -34,11 +34,21 @@ public class CrimeListFragment extends Fragment{
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
     private void updateUI() {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
-        adapter = new CrimeAdapter(crimes);
-        crimeRecyclerView.setAdapter(adapter);
+        if (adapter == null) {
+            adapter = new CrimeAdapter(crimes);
+            crimeRecyclerView.setAdapter(adapter);
+        }else {
+            adapter.notifyDataSetChanged();
+        }
     }
 
     private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -64,7 +74,7 @@ public class CrimeListFragment extends Fragment{
         @Override
         public void onClick(View view) {
 //            Toast.makeText(getActivity(), crime.getTitle() + " clicked!", Toast.LENGTH_SHORT).show();
-            Intent intent = CrimeActivity.newIntent(getActivity(), crime.getId());
+            Intent intent = CrimePagerActivity.newIntent(getActivity(), crime.getId());
             startActivity(intent);
         }
     }
