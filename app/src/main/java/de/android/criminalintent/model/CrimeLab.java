@@ -2,18 +2,23 @@ package de.android.criminalintent.model;
 
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import de.android.criminalintent.model.database.CrimeBaseHelper;
+
 public class CrimeLab {
     private static CrimeLab crimeLab;
     private List<Crime> crimes;
     private Context context;
+    private SQLiteDatabase database;
 
     private CrimeLab(Context context){
-        this.context = context;
+        this.context = context.getApplicationContext();
+        database = new CrimeBaseHelper(context).getWritableDatabase();
         crimes = new ArrayList<>();
     }
 
