@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import de.android.criminalintent.model.database.CrimeDbSchema.CrimeTable;
 
-public class CrimeBaseHelper extends SQLiteOpenHelper{
-    private static final int VERSION = 1;
+public class CrimeBaseHelper extends SQLiteOpenHelper {
+    private static final int VERSION = 3;
     private static final String DATABASE_NAME = "crimeBase.db";
 
     public CrimeBaseHelper(Context context) {
@@ -18,17 +18,19 @@ public class CrimeBaseHelper extends SQLiteOpenHelper{
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + CrimeTable.NAME + "(" +
-        "_id integer primary key autoincrement, " +
-        CrimeTable.Cols.UUID + ", " +
-        CrimeTable.Cols.TITLE + ", " +
-        CrimeTable.Cols.DATE + ", " +
-        CrimeTable.Cols.SOLVED +
-        ")"
+                "_id integer primary key autoincrement, " +
+                CrimeTable.Cols.UUID + ", " +
+                CrimeTable.Cols.TITLE + ", " +
+                CrimeTable.Cols.DATE + ", " +
+                CrimeTable.Cols.SOLVED + "," +
+                CrimeTable.Cols.SUSPECT +
+                ")"
         );
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        db.execSQL("DROP TABLE IF EXISTS " + CrimeTable.NAME);
+        onCreate(db);
     }
 }
