@@ -31,7 +31,7 @@ public class CrimeFragment extends Fragment{
 
     private Crime crime;
     private EditText titleField;
-    private Button dateButton;
+    private Button dateButton, reportButton;
     private CheckBox solvedCheckBox;
 
     public static CrimeFragment newInstance(UUID crimeId) {
@@ -90,6 +90,18 @@ public class CrimeFragment extends Fragment{
                 DatePickerFragment dialog = DatePickerFragment.newInstance(crime.getDate());
                 dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
                 dialog.show(manager, DIALOG_DATE);
+            }
+        });
+
+        reportButton = (Button)v.findViewById(R.id.crime_report);
+        reportButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_SEND);
+                i.setType("text/plain");
+                i.putExtra(Intent.EXTRA_TEXT, getCrimeReport());
+                i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_subject));
+                startActivity(i);
             }
         });
 
