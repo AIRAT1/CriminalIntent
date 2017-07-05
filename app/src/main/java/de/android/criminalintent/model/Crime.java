@@ -14,6 +14,11 @@ public class Crime {
         date = new Date();
     }
 
+    public Crime(UUID id) {
+        this.id = id;
+        date = new Date();
+    }
+
     public UUID getId() {
         return id;
     }
