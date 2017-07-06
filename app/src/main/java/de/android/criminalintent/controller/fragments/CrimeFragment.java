@@ -2,7 +2,10 @@ package de.android.criminalintent.controller.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,10 +31,11 @@ public class CrimeFragment extends Fragment{
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
     private static final int REQUEST_DATE = 0;
+    private static final int REQUEST_CONTACT = 1;
 
     private Crime crime;
     private EditText titleField;
-    private Button dateButton, reportButton;
+    private Button dateButton, reportButton, suspectButton;
     private CheckBox solvedCheckBox;
 
     public static CrimeFragment newInstance(UUID crimeId) {
@@ -101,6 +105,7 @@ public class CrimeFragment extends Fragment{
                 i.setType("text/plain");
                 i.putExtra(Intent.EXTRA_TEXT, getCrimeReport());
                 i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_subject));
+                i = Intent.createChooser(i, getString(R.string.send_report));
                 startActivity(i);
             }
         });
@@ -113,6 +118,19 @@ public class CrimeFragment extends Fragment{
                 crime.setSolved(isChecked);
             }
         });
+
+        final Intent pickContact = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        suspectButton = (Button)v.findViewById(R.id.crime_suspect);
+        suspectButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivityForResult(pickContact,REQUEST_CONTACT);
+            }
+        });
+
+        if (crime.getSuspect() != null) {
+            suspectButton.setText(crime.getSuspect());
+        }
         return v;
     }
 
@@ -126,6 +144,22 @@ public class CrimeFragment extends Fragment{
             Date date = (Date)data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             crime.setDate(date);
             updateDate();
+        }else if (requestCode == REQUEST_CONTACT && data != null) {
+            Uri contactUri = data.getData();
+            String[] queryFields = new String[]{ContactsContract.Contacts.DISPLAY_NAME};
+            Cursor c = getActivity().getContentResolver()
+                    .query(contactUri, queryFields, null, null, null);
+            try {
+                if (c.getCount() == 0) {
+                    return;
+                }
+                c.moveToFirst();
+                String suspect = c.getString(0);
+                crime.setSuspect(suspect);
+                suspectButton.setText(suspect);
+            }finally {
+                c.close();
+            }
         }
     }
 
