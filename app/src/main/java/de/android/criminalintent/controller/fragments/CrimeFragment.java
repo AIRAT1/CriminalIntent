@@ -2,6 +2,7 @@ package de.android.criminalintent.controller.fragments;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import java.util.Date;
 import java.util.UUID;
@@ -37,6 +40,8 @@ public class CrimeFragment extends Fragment{
     private EditText titleField;
     private Button dateButton, reportButton, suspectButton;
     private CheckBox solvedCheckBox;
+    private ImageButton photoButton;
+    private ImageView photoView;
 
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
@@ -120,6 +125,7 @@ public class CrimeFragment extends Fragment{
         });
 
         final Intent pickContact = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+//        pickContact.addCategory(Intent.CATEGORY_HOME);
         suspectButton = (Button)v.findViewById(R.id.crime_suspect);
         suspectButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,6 +137,14 @@ public class CrimeFragment extends Fragment{
         if (crime.getSuspect() != null) {
             suspectButton.setText(crime.getSuspect());
         }
+
+        PackageManager packageManager = getActivity().getPackageManager();
+        if (packageManager.resolveActivity(pickContact, PackageManager.MATCH_DEFAULT_ONLY) == null) {
+            suspectButton.setEnabled(false);
+        }
+
+        photoButton = (ImageButton)v.findViewById(R.id.crime_camera);
+        photoView = (ImageView)v.findViewById(R.id.crime_photo);
         return v;
     }
 
