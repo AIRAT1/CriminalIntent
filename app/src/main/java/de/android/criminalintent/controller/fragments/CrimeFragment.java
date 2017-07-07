@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import java.io.File;
 import java.util.Date;
 import java.util.UUID;
 
@@ -35,6 +37,7 @@ public class CrimeFragment extends Fragment{
     private static final String DIALOG_DATE = "DialogDate";
     private static final int REQUEST_DATE = 0;
     private static final int REQUEST_CONTACT = 1;
+    private static final int REQUEST_PHOTO = 2;
 
     private Crime crime;
     private EditText titleField;
@@ -42,6 +45,7 @@ public class CrimeFragment extends Fragment{
     private CheckBox solvedCheckBox;
     private ImageButton photoButton;
     private ImageView photoView;
+    private File photoFile;
 
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
@@ -56,6 +60,7 @@ public class CrimeFragment extends Fragment{
         super.onCreate(savedInstanceState);
         UUID crimeId = (UUID)getArguments().getSerializable(ARG_CRIME_ID);
         crime = CrimeLab.get(getActivity()).getCrime(crimeId);
+        photoFile = CrimeLab.get(getActivity()).getPhotoFile(crime);
     }
 
     @Override
@@ -144,6 +149,22 @@ public class CrimeFragment extends Fragment{
         }
 
         photoButton = (ImageButton)v.findViewById(R.id.crime_camera);
+        final Intent captureImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        boolean canTakePhoto = photoFile != null && captureImage.resolveActivity(packageManager) != null;
+        photoButton.setEnabled(canTakePhoto);
+
+        if (canTakePhoto) {
+            Uri uri = Uri.fromFile(photoFile);
+            captureImage.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        }
+
+        photoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivityForResult(captureImage, REQUEST_PHOTO);
+            }
+        });
+
         photoView = (ImageView)v.findViewById(R.id.crime_photo);
         return v;
     }
