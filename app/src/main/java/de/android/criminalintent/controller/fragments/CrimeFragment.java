@@ -96,8 +96,6 @@ public class CrimeFragment extends Fragment{
 
         dateButton = (Button)v.findViewById(R.id.crime_date);
         updateDate();
-//        dateButton.setText(crime.getDate().toString());
-//        dateButton.setEnabled(false);
 
         dateButton.setOnClickListener(new View.OnClickListener() {
             @Override
