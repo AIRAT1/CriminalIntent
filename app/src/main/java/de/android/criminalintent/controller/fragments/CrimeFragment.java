@@ -48,6 +48,23 @@ public class CrimeFragment extends Fragment{
     private ImageButton photoButton;
     private ImageView photoView;
     private File photoFile;
+    private Callbacks callbacks;
+
+    public interface Callbacks {
+        void onCrimeUpdated(Crime crime);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        callbacks = (Callbacks)activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        callbacks = null;
+    }
 
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
@@ -86,6 +103,7 @@ public class CrimeFragment extends Fragment{
             @Override
             public void onTextChanged(CharSequence c, int start, int before, int count) {
                 crime.setTitle(c.toString());
+                updateCrime();
             }
 
             @Override
@@ -126,6 +144,7 @@ public class CrimeFragment extends Fragment{
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 crime.setSolved(isChecked);
+                updateCrime();
             }
         });
 
@@ -179,6 +198,7 @@ public class CrimeFragment extends Fragment{
         if (requestCode == REQUEST_DATE) {
             Date date = (Date)data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             crime.setDate(date);
+            updateCrime();
             updateDate();
         }else if (requestCode == REQUEST_CONTACT && data != null) {
             Uri contactUri = data.getData();
@@ -192,11 +212,13 @@ public class CrimeFragment extends Fragment{
                 c.moveToFirst();
                 String suspect = c.getString(0);
                 crime.setSuspect(suspect);
+                updateCrime();
                 suspectButton.setText(suspect);
             }finally {
                 c.close();
             }
         }else if (requestCode == REQUEST_PHOTO) {
+            updateCrime();
             updatePhotoView();
         }
     }
@@ -231,5 +253,10 @@ public class CrimeFragment extends Fragment{
             Bitmap bitmap = PictureUtils.getScaledBitmap(photoFile.getPath(), getActivity());
             photoView.setImageBitmap(bitmap);;
         }
+    }
+
+    private void updateCrime() {
+        CrimeLab.get(getActivity()).updateCrime(crime);
+        callbacks.onCrimeUpdated(crime);
     }
 }

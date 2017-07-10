@@ -19,7 +19,7 @@ import de.android.criminalintent.controller.fragments.CrimeFragment;
 import de.android.criminalintent.model.Crime;
 import de.android.criminalintent.model.CrimeLab;
 
-public class CrimePagerActivity extends AppCompatActivity{
+public class CrimePagerActivity extends AppCompatActivity implements CrimeFragment.Callbacks{
     private static final String EXTRA_CRIME_ID = BuildConfig.APPLICATION_ID + ".crime_id";
     private ViewPager viewPager;
     private List<Crime> crimes;
@@ -59,5 +59,10 @@ public class CrimePagerActivity extends AppCompatActivity{
                 break;
             }
         }
+    }
+
+    @Override
+    public void onCrimeUpdated(Crime crime) {
+        // unused
     }
 }

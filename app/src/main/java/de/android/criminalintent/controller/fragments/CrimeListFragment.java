@@ -1,6 +1,6 @@
 package de.android.criminalintent.controller.fragments;
 
-import android.content.Intent;
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,7 +20,6 @@ import android.widget.TextView;
 import java.util.List;
 
 import de.android.criminalintent.R;
-import de.android.criminalintent.controller.activities.CrimePagerActivity;
 import de.android.criminalintent.model.Crime;
 import de.android.criminalintent.model.CrimeLab;
 
@@ -30,6 +29,23 @@ public class CrimeListFragment extends Fragment{
     private RecyclerView crimeRecyclerView;
     private CrimeAdapter adapter;
     private boolean subtitleVisible;
+    private Callbacks callbacks;
+
+    public interface Callbacks {
+        void onCrimeSelected(Crime crime);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        callbacks = (Callbacks)activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        callbacks = null;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,8 +98,8 @@ public class CrimeListFragment extends Fragment{
             case R.id.menu_item_new_crime:
                 Crime crime = new Crime();
                 CrimeLab.get(getActivity()).addCrime(crime);
-                Intent intent = CrimePagerActivity.newIntent(getActivity(), crime.getId());
-                startActivity(intent);
+                updateUI();
+                callbacks.onCrimeSelected(crime);
                 return true;
             case R.id.menu_item_show_subtitle:
                 subtitleVisible = !subtitleVisible;
@@ -108,7 +124,7 @@ public class CrimeListFragment extends Fragment{
         activity.getSupportActionBar().setSubtitle(subtitle);
     }
 
-    private void updateUI() {
+    public void updateUI() {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
         if (adapter == null) {
@@ -144,9 +160,7 @@ public class CrimeListFragment extends Fragment{
 
         @Override
         public void onClick(View view) {
-//            Toast.makeText(getActivity(), crime.getTitle() + " clicked!", Toast.LENGTH_SHORT).show();
-            Intent intent = CrimePagerActivity.newIntent(getActivity(), crime.getId());
-            startActivity(intent);
+            callbacks.onCrimeSelected(crime);
         }
     }
 
